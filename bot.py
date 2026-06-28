@@ -127,3 +127,8 @@ async def warn(update, context):
         )
 
 app.add_handler(CommandHandler("warn", warn))
+
+from panel import panel_handler, button_handler
+
+app.add_handler(panel_handler)
+app.add_handler(button_handler)
