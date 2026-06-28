@@ -87,3 +87,43 @@ async def unlock_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 app.add_handler(CommandHandler("lock", lock_cmd))
 app.add_handler(CommandHandler("unlock", unlock_cmd))
+
+from database import add_warn
+from telegram.constants import ChatMemberStatus
+
+async def warn(update, context):
+    member = await context.bot.get_chat_member(
+        update.effective_chat.id,
+        update.effective_user.id
+    )
+
+    if member.status not in (
+        ChatMemberStatus.ADMINISTRATOR,
+        ChatMemberStatus.OWNER,
+    ):
+        return
+
+    if not update.message.reply_to_message:
+        await update.message.reply_text("روی پیام کاربر ریپلای کن و /warn را بزن.")
+        return
+
+    user = update.message.reply_to_message.from_user
+
+    warns = add_warn(update.effective_chat.id, user.id)
+
+    await update.message.reply_text(
+        f"⚠️ {user.first_name} اخطار گرفت.\n"
+        f"تعداد اخطار: {warns}/3"
+    )
+
+    if warns >= 3:
+        await context.bot.ban_chat_member(
+            update.effective_chat.id,
+            user.id
+        )
+
+        await update.message.reply_text(
+            "🚫 کاربر به دلیل دریافت ۳ اخطار از گروه اخراج شد."
+        )
+
+app.add_handler(CommandHandler("warn", warn))
