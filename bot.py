@@ -45,3 +45,45 @@ app.add_handler(
 from filters import link_handler
 
 app.add_handler(link_handler)
+from telegram import Update
+from telegram.ext import CommandHandler, ContextTypes
+from locks import lock, unlock
+
+async def lock_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    member = await context.bot.get_chat_member(
+        update.effective_chat.id,
+        update.effective_user.id
+    )
+
+    if member.status not in ["administrator", "creator"]:
+        return
+
+    if not context.args:
+        await update.message.reply_text("مثال:\n/lock gif")
+        return
+
+    if lock(context.args[0]):
+        await update.message.reply_text("🔒 قفل فعال شد.")
+    else:
+        await update.message.reply_text("❌ گزینه نامعتبر است.")
+
+async def unlock_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    member = await context.bot.get_chat_member(
+        update.effective_chat.id,
+        update.effective_user.id
+    )
+
+    if member.status not in ["administrator", "creator"]:
+        return
+
+    if not context.args:
+        await update.message.reply_text("مثال:\n/unlock gif")
+        return
+
+    if unlock(context.args[0]):
+        await update.message.reply_text("🔓 قفل غیرفعال شد.")
+    else:
+        await update.message.reply_text("❌ گزینه نامعتبر است.")
+
+app.add_handler(CommandHandler("lock", lock_cmd))
+app.add_handler(CommandHandler("unlock", unlock_cmd))
