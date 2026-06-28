@@ -132,3 +132,7 @@ from panel import panel_handler, button_handler
 
 app.add_handler(panel_handler)
 app.add_handler(button_handler)
+
+from welcome import welcome_handler
+
+app.add_handler(welcome_handler)
