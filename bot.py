@@ -42,3 +42,6 @@ async def block_gif(update, context):
 app.add_handler(
     MessageHandler(filters.ANIMATION, block_gif)
 )
+from filters import link_handler
+
+app.add_handler(link_handler)
