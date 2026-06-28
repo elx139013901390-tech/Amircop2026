@@ -136,3 +136,6 @@ app.add_handler(button_handler)
 from welcome import welcome_handler
 
 app.add_handler(welcome_handler)
+from admin import kick_handler
+
+app.add_handler(kick_handler)
